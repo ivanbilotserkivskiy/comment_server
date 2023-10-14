@@ -1,0 +1,13 @@
+version: '1'
+services:
+  web:
+    build: .
+    ports:
+      - 3307:3307
+  db:
+    image: mysql
+    environment:
+      - DB_NAME=db_comment
+      - DB_USER=root
+      - DB_HOST=localhost
+      - DB_PASSWORD=mysql123
