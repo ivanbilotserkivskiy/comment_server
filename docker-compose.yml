@@ -1,13 +1,17 @@
-version: '1'
+version: '3.3'
 services:
-  web:
-    build: .
-    ports:
-      - 3307:3307
   db:
     image: mysql
     environment:
-      - DB_NAME=db_comment
-      - DB_USER=root
-      - DB_HOST=localhost
-      - DB_PASSWORD=mysql123
+      - MYSQL_DATABASE = db_comment
+      - MYSQL_USER = user
+      - MYSQL_PASSWORD = mysql123
+      - MYSQL_ROOT_PASSWORD = mysql123
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+volumes:
+  my-db:
