@@ -4,20 +4,18 @@ services:
     container_name: mysqlcontainer
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
-    volumes:
-      - ./init/init.sql:/docker-entrypoint-init.d/0_init.sql
-      - $HOME/database:/var/lib/mysql
     ports:
       - 3307:3306
     expose:
       - 3306
     environment:
-      MYSQL_DATABASE: db_comment
-      MYSQL_USER: mysql
-      MYSQL_PASSWORD: mysql123
-      MYSQL_ROOT_PASSWORD: mysql123
+      MYSQL_DATABASE: defaultdb
+      MYSQL_HOST: mysql-bbcb407-torentino56-d5ca.aivencloud.com
+      MYSQL_USER: avnadmin
+      MYSQL_PASSWORD: VNS_iVj1dhVmNOIkEG33Bc0
+      MYSQL_ROOT_PASSWORD: VNS_iVj1dhVmNOIkEG33Bc0
       SERVICE_TAGS: dev
-      SERVICE_NAME: mysqldb
+      SERVICE_NAME: defaultdb
     networks:
       - internalnet
 
@@ -27,17 +25,19 @@ services:
     image: nodeapp:v1
     ports:
       - 3001:3001
+      - 8001:8001
     expose:
-      - 3000
+      - 3001
+      - 8001
     environment:
       SERVICE_TAGS: dev
       SERVICE_NAME: nodeappservice
       PORT: 3001
-      DB_PORT: 3306
-      DB_NAME: db_comment
-      DB_USER: 'mysql'
-      DB_HOST: 'mysqldb'
-      DB_PASSWORD: 'mysql123'
+      DB_PORT: 20352
+      DB_NAME: defaultdb
+      DB_USER: 'avnadmin'
+      DB_HOST: 'mysql-bbcb407-torentino56-d5ca.aivencloud.com'
+      DB_PASSWORD: 'AVNS_iVj1dhVmNOIkEG33Bc0'
     depends_on:
       - mysqldb
     networks:
