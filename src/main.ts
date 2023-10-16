@@ -14,7 +14,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://your-frontend.com');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.setHeader(
       'Access-Control-Allow-Methods',
       'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE',
