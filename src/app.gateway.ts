@@ -12,7 +12,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const PORT = typeof process.env.PORT === 'string' ? +process.env.PORT : 10000;
+const PORT = 10001;
 
 @WebSocketGateway(PORT, { cors: '*:*' })
 export class AppGateway
