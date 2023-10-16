@@ -12,17 +12,16 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const WS_PORT =
-  typeof process.env.WS_PORT === 'string' ? +process.env.WS_PORT : 8001;
+const PORT = typeof process.env.PORT === 'string' ? +process.env.PORT : 10000;
 
-@WebSocketGateway(WS_PORT, { cors: '*:*' })
+@WebSocketGateway(PORT, { cors: '*:*' })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() wss: Server;
   afterInit(server: Server) {
     this.logger.log(`Initialized ${server}`);
-    this.logger.log(`Socket PORT: ${WS_PORT}`);
+    this.logger.log(`Socket PORT: ${PORT}`);
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected:  ${client}`);
