@@ -14,7 +14,7 @@ dotenv.config();
 
 const PORT = 10000;
 
-@WebSocketGateway(PORT, { cors: '*:*' })
+@WebSocketGateway({ cors: '*:*' })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
