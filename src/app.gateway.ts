@@ -12,7 +12,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const PORT = 10001;
+const PORT = 10000;
 
 @WebSocketGateway(PORT, { cors: '*:*' })
 export class AppGateway
