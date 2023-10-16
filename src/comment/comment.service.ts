@@ -2,12 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentEntity } from './comment.entity';
 import { IsNull, Repository } from 'typeorm';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config';
+import mime from 'mime-types';
 
 @Injectable()
 export class CommentService {
+  private readonly s3Client = new S3Client({
+    region: this.configService.getOrThrow('AWS_S3_REGION'),
+    credentials: {
+      secretAccessKey: this.configService.getOrThrow('AWS_SECRET_ACCESS_KEY'),
+      accessKeyId: this.configService.getOrThrow('AWS_ACCESS_KEY'),
+    },
+  });
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
+    private readonly configService: ConfigService,
   ) {}
 
   async findAll(filter, query?): Promise<CommentEntity[] | string> {
@@ -67,15 +78,25 @@ export class CommentService {
     });
   }
 
-  async add(comment): Promise<CommentEntity | string> {
+  async add(comment, file, fileName): Promise<CommentEntity | string> {
+    if (file) {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.configService.getOrThrow('BUCKET'),
+          Key: comment.file_path,
+          Body: file,
+          ContentType: mime.lookup(fileName),
+        }),
+      );
+    }
+    const region = this.configService.getOrThrow('AWS_S3_REGION');
     try {
-      const { parent_id, comment_text, file_path, username, email, tred_id } =
-        comment;
+      const { parent_id, comment_text, username, email, tred_id } = comment;
       const data = await this.commentRepository.save({
         parent_id,
         tred_id,
         comment_text,
-        file_path,
+        file_path: `https://coll-bucket.s3.${region}.amazonaws.com/${fileName}`,
         username,
         email,
       });

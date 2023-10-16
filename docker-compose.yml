@@ -33,11 +33,15 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: nodeappservice
       PORT: 3001
+      WS_PORT: 8001
       DB_PORT: 20352
       DB_NAME: defaultdb
       DB_USER: 'avnadmin'
       DB_HOST: 'mysql-bbcb407-torentino56-d5ca.aivencloud.com'
       DB_PASSWORD: 'AVNS_iVj1dhVmNOIkEG33Bc0'
+      AWS_ACCESS_KEY: 'AKIA5YYIN6ESJ3HVBRPO'
+      AWS_SECRET_ACCESS_KEY: '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'
+      AWS_S3_REGION: 'eu-north-1'
     depends_on:
       - mysqldb
     networks:

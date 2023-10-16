@@ -108,9 +108,12 @@ export class CommentController {
     const cleanCommentText = cleanHTML(comment_text);
 
     let dbfilename = null;
-
+    let fileBuffer = null;
+    let fileName = '';
     if (file) {
-      dbfilename = `/files/${file.filename}`;
+      dbfilename = `${file.filename}`;
+      fileBuffer = file.buffer;
+      fileName = file.originalname;
     }
 
     const parentId = parent_id ? +parent_id : null;
@@ -119,14 +122,18 @@ export class CommentController {
       : await this.commentService.findMaxTredId();
 
     console.log(tredId);
-    const newComment = await this.commentService.add({
-      parent_id: parentId,
-      tred_id: tredId,
-      comment_text: cleanCommentText,
-      file_path: dbfilename,
-      username,
-      email,
-    });
+    const newComment = await this.commentService.add(
+      {
+        parent_id: parentId,
+        tred_id: tredId,
+        comment_text: cleanCommentText,
+        file_path: dbfilename,
+        username,
+        email,
+      },
+      fileBuffer,
+      fileName,
+    );
 
     return newComment;
   }
