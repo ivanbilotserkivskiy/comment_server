@@ -4,7 +4,6 @@ import { CommentEntity } from './comment.entity';
 import { IsNull, Repository } from 'typeorm';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
-import mime from 'mime-types';
 
 @Injectable()
 export class CommentService {
@@ -78,19 +77,19 @@ export class CommentService {
     });
   }
 
-  async add(comment, file, fileName: string): Promise<CommentEntity | string> {
+  async add(
+    comment,
+    file,
+    fileName: string,
+    mimetype,
+  ): Promise<CommentEntity | string> {
     if (file) {
-      const extension = fileName.slice(-4);
-
-      const contentType =
-        extension === '.txt' ? 'plain/text' : mime.lookup(fileName);
-
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.configService.getOrThrow('BUCKET'),
-          Key: comment.file_path,
+          Key: fileName,
           Body: file,
-          ContentType: contentType,
+          ContentType: mimetype,
         }),
       );
     }

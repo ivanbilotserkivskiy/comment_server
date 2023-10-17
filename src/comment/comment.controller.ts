@@ -12,8 +12,6 @@ import {
   ParseFilePipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { customFileValidator } from 'src/utils/customFileValidator';
 import { validation } from 'src/utils/validation';
 import { cleanHTML } from 'src/utils/sanitize';
@@ -72,21 +70,7 @@ export class CommentController {
   }
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './files',
-        filename: (req, file, callback) => {
-          const unixid = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          const filename = `${unixid}${ext}`;
-
-          callback(null, filename);
-        },
-      }),
-      fileFilter: customFileValidator,
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file', { fileFilter: customFileValidator }))
   async add(
     @Body() comment: CommentEntity,
     @UploadedFile(new ParseFilePipe({ fileIsRequired: false }))
@@ -110,7 +94,9 @@ export class CommentController {
     let dbfilename = null;
     let fileBuffer = null;
     let fileName = '';
+    let mimetype = '';
     if (file) {
+      mimetype = file.mimetype;
       dbfilename = `${file.filename}`;
       fileBuffer = file.buffer;
       fileName = file.originalname;
@@ -121,7 +107,6 @@ export class CommentController {
       ? +tred_id
       : await this.commentService.findMaxTredId();
 
-    console.log(tredId);
     const newComment = await this.commentService.add(
       {
         parent_id: parentId,
@@ -133,6 +118,7 @@ export class CommentController {
       },
       fileBuffer,
       fileName,
+      mimetype,
     );
 
     return newComment;
