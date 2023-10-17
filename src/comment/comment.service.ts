@@ -78,14 +78,19 @@ export class CommentService {
     });
   }
 
-  async add(comment, file, fileName): Promise<CommentEntity | string> {
+  async add(comment, file, fileName: string): Promise<CommentEntity | string> {
     if (file) {
+      const extension = fileName.slice(-4);
+
+      const contentType =
+        extension === '.txt' ? 'plain/text' : mime.lookup(fileName);
+
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.configService.getOrThrow('BUCKET'),
           Key: comment.file_path,
           Body: file,
-          ContentType: mime.lookup(fileName),
+          ContentType: contentType,
         }),
       );
     }
